@@ -14,7 +14,7 @@
       </div>
       <div class="account">
         <div v-if="this.$store.state.isLoggedIn">
-          <span class="email">a@a.com</span>
+          <span class="email">{{ this.$store.state.currentUser }}</span>
         </div>
         <div v-if="this.$store.state.isLoggedIn">
           <button @click="logout">Logout</button>

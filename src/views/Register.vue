@@ -1,23 +1,25 @@
 <template>
   <div class="login">
-    <div class="login-container">
+    <div class="login-container" v-if="$store.state.isLoggingIn">
       <div class="login-box">
         <div class="login-icon">
           <img src="../assets/register.svg" alt="signin" />
           <span>Register</span>
         </div>
-        <form action="input">
-          <div class="id">
-            <input type="text" placeholder="Email ID" v-model="email" />
-          </div>
-          <div class="password">
-            <input type="password" placeholder="Password" v-model="password" />
-          </div>
-          <div class="submit">
-            <button @click="register">Register</button>
-          </div>
-        </form>
+        <div class="id">
+          <input type="text" placeholder="Email ID" v-model="email" />
+        </div>
+        <div class="password">
+          <input type="password" placeholder="Password" v-model="password" />
+        </div>
+        <div class="submit">
+          <button @click="register">Register</button>
+        </div>
       </div>
+    </div>
+    <div class="loading-icon" v-else>
+      <img src="../assets/Interwind-1s-200px.svg" alt="loading" style="width: 80px" />
+      <p>Logging In</p>
     </div>
   </div>
 </template>
@@ -103,6 +105,15 @@ export default {
           cursor: pointer;
         }
       }
+    }
+  }
+  .loading-icon {
+    margin-top: 1em;
+    text-align: center;
+    p {
+      margin-top: 0;
+      color: rgb(211, 50, 50);
+      font-size: 1.5rem;
     }
   }
 }

@@ -11,6 +11,9 @@ export default new Vuex.Store({
     isLoggedIn: false,
     userTodos: [],
     postSubscription: null,
+    isTodosLoading: true,
+    isLoggingIn: true,
+    currentUser: localStorage.getItem("currentUser"),
   },
   mutations: {
     login: (state, user) => {
@@ -34,27 +37,31 @@ export default new Vuex.Store({
   },
   actions: {
     async login({ commit }, payload) {
-      try {
-        let response = await auth.signInWithEmailAndPassword(
-          payload.email,
-          payload.password
-        );
-        commit("login", response.user);
-      } catch (err) {
-        console.log(err);
-        throw err;
-      }
+      this.state.isLoggingIn = false;
+      let response = await auth.signInWithEmailAndPassword(
+        payload.email,
+        payload.password
+      );
+      this.state.currentUser = payload.email;
+      localStorage.setItem("currentUser", payload.email);
+      commit("login", response.user);
     },
     async logout(context) {
       await auth.signOut();
       localStorage.removeItem("loggedUser");
+      localStorage.removeItem("currentUser");
+      this.state.isLoggingIn = true;
+      this.state.currentUser = "";
       context.commit("logout");
     },
     async register({ commit }, payload) {
+      this.state.isLoggingIn = false;
       let response = await auth.createUserWithEmailAndPassword(
         payload.email,
         payload.password
       );
+      this.state.currentUser = payload.email;
+      localStorage.setItem("currentUser", payload.email);
       commit("register", response.user);
     },
     async addTodo({ commit }, payload) {
@@ -66,6 +73,7 @@ export default new Vuex.Store({
       }
     },
     async loadTodos(context) {
+      context.state.loading = true;
       let postSubscription = db
         .collection("Todos")
         .where("activeUser", "==", context.state.user.uid)
@@ -76,6 +84,7 @@ export default new Vuex.Store({
             let data = { id: doc.id, Task: doc.data().Task };
             userTodos.push(data);
           });
+          context.state.isTodosLoading = false;
           context.commit("loadTodos", userTodos);
         });
       return postSubscription;

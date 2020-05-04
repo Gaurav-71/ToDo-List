@@ -4,14 +4,20 @@
       <form @submit.prevent="addTodo">
         <input type="text" placeholder="+ Enter a new task" v-model="tempTodo" />
       </form>
-      <ul>
-        <li v-for="todo in getList" :key="todo.id">
-          {{ todo.Task }}
-          <button @click="deleteTodo(todo.id)">
-            <img src="../assets/delete.svg" alt="todo-logo" />
-          </button>
-        </li>
-      </ul>
+      <div class="loading-icon" v-if="$store.state.isTodosLoading">
+        <img src="../assets/loading.svg" alt="loading" style="width: 80px" />
+        <p>Fetching your data</p>
+      </div>
+      <div class="tasks">
+        <ul>
+          <li v-for="todo in getList" :key="todo.id">
+            {{ todo.Task }}
+            <button @click="deleteTodo(todo.id)">
+              <img src="../assets/delete.svg" alt="todo-logo" />
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -92,6 +98,15 @@ export default {
         box-shadow: 0 0 10px black;
         color: grey;
         outline: none;
+      }
+    }
+    .loading-icon {
+      margin-top: 1em;
+      text-align: center;
+      p {
+        margin-top: 0;
+        color: rgb(211, 50, 50);
+        font-size: 1.5rem;
       }
     }
     ul {
