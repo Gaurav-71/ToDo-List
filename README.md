@@ -1,6 +1,11 @@
-# todo
+# ToDo List
+A ToDo list which helps you note down important tasks to complete. 
 
-## Project setup
+Features:-
+  - Add a new task to complete  
+  - Delete a task
+
+# Project setup
 ```
 npm install
 ```
@@ -22,3 +27,4 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
