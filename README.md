@@ -2,7 +2,9 @@
 A ToDo list which helps you note down important tasks to complete. 
 
 Features:-
-  - Add a new task to complete  
+  - Create a new account
+  - Login with a personal account
+  - Add a new task 
   - Delete a task
 
 # Project setup
