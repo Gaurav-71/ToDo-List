@@ -4,20 +4,20 @@
       <img src="../assets/reminders.svg" alt="logo" />
       <div class="links">
         <ul class="mylinks">
-          <li v-if="!isloggedIn">
+          <li v-if="!this.$store.state.isLoggedIn">
             <router-link to="/register">Register</router-link>
           </li>
-          <li v-if="!isloggedIn">
+          <li v-if="!this.$store.state.isLoggedIn">
             <router-link to="/login">Login</router-link>
-          </li>          
+          </li>
         </ul>
       </div>
       <div class="account">
-        <div v-if="isloggedIn">
-              <span class="email">{{currentUser}}</span>
+        <div v-if="this.$store.state.isLoggedIn">
+          <span class="email">a@a.com</span>
         </div>
-        <div v-if="isloggedIn">
-              <button @click="logout">Logout</button>
+        <div v-if="this.$store.state.isLoggedIn">
+          <button @click="logout">Logout</button>
         </div>
       </div>
     </div>
@@ -25,38 +25,30 @@
 </template>
 
 <script>
-import firebase from "firebase";
-
 export default {
   name: "Header",
-  data() {
-    return {
-      isloggedIn: false,
-      currentUser: false
-    };
-  },
-  created() {
-    if (firebase.auth().currentUser) {
-      this.isloggedIn = true;
-      this.currentUser = firebase.auth().currentUser.email;
-    }
-  },
   methods: {
     logout() {
-      firebase
-        .auth()
-        .signOut()
+      this.$store
+        .dispatch("logout")
         .then(() => {
-          localStorage.removeItem("email");
-          this.$router.go({ path: this.$router.path });
+          this.$store.state.isLoggedIn = false;
+          this.$router.push("login");
+        })
+        .catch(err => {
+          alert(err);
         });
+    }
+  },
+  created() {
+    if (JSON.parse(localStorage.getItem("loggedUser"))) {
+      this.$store.state.isLoggedIn = true;
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
-
 nav {
   .logo-container {
     text-align: center;
@@ -67,52 +59,53 @@ nav {
     justify-content: center;
     img {
       width: 90px;
-      margin-bottom: 0.7rem;      
+      height: 90px;
+      margin-bottom: 0.7rem;
     }
-    .links {      
+    .links {
       ul {
         list-style-type: none;
         margin: 0;
         padding: 0;
         padding-top: 1.5rem;
         margin-left: 1.2rem;
-        overflow: hidden;  
-        position: absolute;      
-        float: right;        
+        overflow: hidden;
+        position: absolute;
+        float: right;
         li {
           float: left;
-          margin: .5rem 1.6rem 0 0;          
+          margin: 0.5rem 1.6rem 0 0;
           a {
             display: block;
             color: grey;
-            text-align: center;            
+            text-align: center;
             text-decoration: none;
           }
           a:hover {
             background-color: #111111;
             color: orangered;
-          }          
-        }        
+          }
+        }
       }
     }
-    .account{        
-      margin-top: 1.1rem;        
-      span{            
-        margin: 1rem;            
+    .account {
+      margin-top: 1.1rem;
+      span {
+        margin: 1rem;
         color: grey;
       }
-      button{
-          margin: 1rem;          
-          font-size: 15px;
-          padding: 0.5em;
-          border: none;
-          outline: none;
-          background: none;
-          color: orangered;
-          box-shadow: 0 0 10px black;
-          cursor: pointer;        
+      button {
+        margin: 1rem;
+        font-size: 15px;
+        padding: 0.5em;
+        border: none;
+        outline: none;
+        background: none;
+        color: orangered;
+        box-shadow: 0 0 10px black;
+        cursor: pointer;
       }
-    }    
+    }
   }
 }
 </style>

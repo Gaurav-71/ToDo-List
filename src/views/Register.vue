@@ -23,6 +23,30 @@
 </template>
 
 <script>
+export default {
+  name: "Register",
+  data() {
+    return {
+      email: "",
+      password: ""
+    };
+  },
+  methods: {
+    register() {
+      let data = { email: this.email, password: this.password };
+      this.$store
+        .dispatch("register", data)
+        .then(() => {
+          this.$router.push("todo");
+        })
+        .catch(err => {
+          alert(err);
+        });
+      this.email = "";
+      this.password = "";
+    }
+  }
+};
 </script>
 
 <style scoped lang="scss">

@@ -2,16 +2,12 @@
   <div class="todo">
     <div class="todo-list">
       <form @submit.prevent="addTodo">
-        <input type="text" placeholder="+ Enter a new task" v-model="newTodo" />
+        <input type="text" placeholder="+ Enter a new task" v-model="tempTodo" />
       </form>
-      <div class="loading-icon" v-if="$store.state.loading">
-        <img src="../assets/loading.svg" alt="loading" style="width: 80px" />
-        <p>Fetching your data</p>
-      </div>
       <ul>
-        <li v-for="(todo,index) in todos" :key="index">
+        <li v-for="todo in getList" :key="todo.id">
           {{ todo.Task }}
-          <button @click="deleteTodo(index,todo.id)">
+          <button @click="deleteTodo(todo.id)">
             <img src="../assets/delete.svg" alt="todo-logo" />
           </button>
         </li>
@@ -21,6 +17,61 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
+export default {
+  name: "Todo",
+  data() {
+    return {
+      tempTodo: "",
+      unsubscribe: null
+    };
+  },
+  methods: {
+    addTodo() {
+      let task = this.tempTodo.trim();
+      if (task.length != 0) {
+        this.$store
+          .dispatch("addTodo", {
+            Task: task,
+            timestamp: Date.now(),
+            activeUser: this.$store.state.user.uid
+          })
+          .then(() => {})
+          .catch(err => {
+            console.log(err);
+          });
+      }
+      this.tempTodo = "";
+    },
+    deleteTodo(id) {
+      this.$store
+        .dispatch("deleteTodo", id)
+        .then(resp => {
+          console.log(resp);
+        })
+        .catch(err => {
+          alert(err);
+        });
+    }
+  },
+  computed: {
+    ...mapGetters(["getList"])
+  },
+  mounted() {
+    this.$store
+      .dispatch("loadTodos")
+      .then(resp => {
+        this.unsubscribe = resp;
+      })
+      .catch(err => {
+        alert(err);
+      });
+  },
+  beforeDestroy() {
+    this.unsubscribe();
+  }
+};
 </script>
 
 <style scoped lang="scss">
@@ -41,15 +92,6 @@
         box-shadow: 0 0 10px black;
         color: grey;
         outline: none;
-      }
-    }
-    .loading-icon {
-      margin-top: 1em;
-      text-align: center;
-      p {
-        margin-top: 0;
-        color: rgb(211, 50, 50);
-        font-size: 1.5rem;
       }
     }
     ul {

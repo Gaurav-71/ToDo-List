@@ -23,6 +23,41 @@
 </template>
 
 <script>
+export default {
+  name: "Login",
+  data() {
+    return {
+      email: "",
+      password: ""
+    };
+  },
+  methods: {
+    login() {
+      let data = { email: this.email, password: this.password };
+      this.$store
+        .dispatch("login", data)
+        .then(() => {
+          this.$router.push("todo");
+        })
+        .catch(err => {
+          alert(err);
+        });
+      (this.email = ""), (this.password = "");
+    }
+  },
+  mounted() {
+    let user = JSON.parse(localStorage.getItem("loggedUser"));
+    if (user) {
+      this.$store.state.user = user;
+      this.$router.push("todo");
+    }
+  },
+  created() {
+    if (JSON.parse(localStorage.getItem("loggedUser"))) {
+      this.$store.state.isLoggedIn = true;
+    }
+  }
+};
 </script>
 
 <style scoped lang="scss">
