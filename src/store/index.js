@@ -37,14 +37,19 @@ export default new Vuex.Store({
   },
   actions: {
     async login({ commit }, payload) {
-      this.state.isLoggingIn = false;
-      let response = await auth.signInWithEmailAndPassword(
-        payload.email,
-        payload.password
-      );
-      this.state.currentUser = payload.email;
-      localStorage.setItem("currentUser", payload.email);
-      commit("login", response.user);
+      try {        
+        let response = await auth.signInWithEmailAndPassword(
+          payload.email,
+          payload.password
+        );
+        this.state.isLoggingIn = false;
+        this.state.currentUser = payload.email;
+        localStorage.setItem("currentUser", payload.email);
+        commit("login", response.user);
+      } catch (err) {
+        this.state.isLoggingIn = true;        
+        throw err;
+      }
     },
     async logout(context) {
       await auth.signOut();
