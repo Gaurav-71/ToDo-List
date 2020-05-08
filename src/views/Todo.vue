@@ -11,10 +11,28 @@
       <div class="tasks">
         <ul>
           <li v-for="todo in getList" :key="todo.id">
-            {{ todo.Task }}
-            <button @click="deleteTodo(todo.id)">
-              <img src="../assets/delete.svg" alt="todo-logo" />
-            </button>
+            <div v-if="!(todo.isEditing)">
+              {{ todo.Task }}
+              <div class="buttons">
+                <button @click="editTodo(todo.id)">
+                  <img src="../assets/edit.svg" alt="edit" />
+                </button>
+                <button @click="deleteTodo(todo.id)">
+                  <img src="../assets/delete.svg" alt="todo-logo" />
+                </button>
+              </div>
+            </div>
+            <div v-else>
+              <input type="text" v-model="todo.Task" />
+              <div class="buttons">
+                <button @click="saveEdit(todo)">
+                  <img src="../assets/save.svg" alt="todo-logo" />
+                </button>
+                <button @click="cancelEdit(todo.id)">
+                  <img src="../assets/cancel.svg" alt="edit" />
+                </button>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -41,7 +59,8 @@ export default {
           .dispatch("addTodo", {
             Task: task,
             timestamp: Date.now(),
-            activeUser: this.$store.state.user.uid
+            activeUser: this.$store.state.user.uid,
+            isEditing: false
           })
           .then(() => {})
           .catch(err => {
@@ -58,6 +77,36 @@ export default {
         })
         .catch(err => {
           alert(err);
+        });
+    },
+    editTodo(id) {
+      this.$store
+        .dispatch("editTodo", id)
+        .then(resp => {
+          console.log(resp);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    saveEdit(obj){
+    this.$store
+        .dispatch("saveEdit", obj)
+        .then(resp => {
+          console.log(resp);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    cancelEdit(id) {
+      this.$store
+        .dispatch("cancelEdit", id)
+        .then(resp => {
+          console.log(resp);
+        })
+        .catch(err => {
+          console.log(err);
         });
     }
   },
@@ -123,15 +172,25 @@ export default {
         padding: 20px;
         font-size: 1.3em;
         border-bottom: 1px solid black;
-        button {
-          float: right;
-          cursor: pointer;
-          background: none;
+        input {
           border: none;
-          outline: none;
-          img {
-            width: 27px;
+          background: none;
+          text-align: left;
+          font-size: 1.2rem;
+          color: orangered;
+          width: 70%;
+        }
+        .buttons {
+          float: right;
+          button {
+            cursor: pointer;
+            background: none;
+            border: none;
             outline: none;
+            img {
+              width: 27px;
+              outline: none;
+            }
           }
         }
       }
