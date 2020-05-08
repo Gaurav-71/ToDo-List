@@ -61,7 +61,8 @@ export default {
       border-radius: 1em;
       width: 22rem;
       height: 20rem;
-      box-shadow: 0 0 10px black;
+      box-shadow: 0 0 20px black;
+      border: 2px solid grey;
       .login-icon {
         text-align: left;
         img {

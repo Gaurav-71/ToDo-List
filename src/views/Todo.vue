@@ -11,8 +11,10 @@
       <div class="tasks">
         <ul>
           <li v-for="todo in getList" :key="todo.id">
-            <div v-if="!(todo.isEditing)">
-              {{ todo.Task }}
+            <div v-if="!(todo.isEditing)" class="todo-container">
+              <div>
+                {{ todo.Task }}
+              </div>
               <div class="buttons">
                 <button @click="editTodo(todo.id)">
                   <img src="../assets/edit.svg" alt="edit" />
@@ -22,7 +24,7 @@
                 </button>
               </div>
             </div>
-            <div v-else>
+            <div v-else class="todo-container">
               <input type="text" v-model="todo.Task" />
               <div class="buttons">
                 <button @click="saveEdit(todo)">
@@ -132,7 +134,7 @@ export default {
 <style scoped lang="scss">
 .todo {
   border-radius: 1em;
-  background-color: none;
+  background-color: none;  
   .todo-list {
     form {
       width: 100%;
@@ -142,10 +144,9 @@ export default {
         background-color: rgb(15, 14, 14);
         padding: 20px;
         font-size: 1.3em;
-        border: 2px solid black;
+        border: 2px solid grey;
         border-radius: 1em;
-        box-shadow: 0 0 10px black;
-        color: grey;
+        box-shadow: 0 0 20px black;        
         outline: none;
       }
     }
@@ -164,32 +165,38 @@ export default {
       margin-top: 30px;
       list-style-type: none;
       color: orangered;
-      border: 2px solid black;
+      border: 2px solid grey;
       border-radius: 1em;
-      box-shadow: 0 0 10px black;
+      box-shadow: 0 0 20px black;
       li {
         text-align: left;
         padding: 20px;
         font-size: 1.3em;
-        border-bottom: 1px solid black;
-        input {
-          border: none;
-          background: none;
-          text-align: left;
-          font-size: 1.2rem;
-          color: orangered;
-          width: 70%;
-        }
-        .buttons {
-          float: right;
-          button {
-            cursor: pointer;
-            background: none;
+        border-bottom: 1px solid grey;
+        word-wrap: break-word;
+        .todo-container{
+          display: grid;
+          align-items: center;
+          grid-template-columns: 90% 10%;
+          input {
             border: none;
-            outline: none;
-            img {
-              width: 27px;
+            background: none;
+            text-align: left;
+            font-size: 1.2rem;
+            color: grey;      
+            outline: none;                  
+          }
+          .buttons {
+            text-align: center;  
+            button {              
+              cursor: pointer;
+              background: none;
+              border: none;
               outline: none;
+              img {
+                width: 27px;
+                outline: none;
+              }
             }
           }
         }
