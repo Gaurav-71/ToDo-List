@@ -37,17 +37,17 @@ export default new Vuex.Store({
   },
   actions: {
     async login({ commit }, payload) {
-      try {        
+      this.state.isLoggingIn = false;
+      try {
         let response = await auth.signInWithEmailAndPassword(
           payload.email,
           payload.password
         );
-        this.state.isLoggingIn = false;
         this.state.currentUser = payload.email;
         localStorage.setItem("currentUser", payload.email);
         commit("login", response.user);
       } catch (err) {
-        this.state.isLoggingIn = true;        
+        this.state.isLoggingIn = true;
         throw err;
       }
     },
@@ -61,10 +61,15 @@ export default new Vuex.Store({
     },
     async register({ commit }, payload) {
       this.state.isLoggingIn = false;
-      let response = await auth.createUserWithEmailAndPassword(
-        payload.email,
-        payload.password
-      );
+      let response;
+      try {
+        response = await auth.createUserWithEmailAndPassword(
+          payload.email,
+          payload.password
+        );
+      } catch (err) {
+        this.state.isLoggingIn = true;
+      }
       this.state.currentUser = payload.email;
       localStorage.setItem("currentUser", payload.email);
       commit("register", response.user);
@@ -73,6 +78,39 @@ export default new Vuex.Store({
       try {
         console.log(commit);
         await db.collection("Todos").add(payload);
+      } catch (err) {
+        alert(err);
+      }
+    },
+    async editTodo({ commit }, payload) {
+      try {
+        console.log(commit);
+        await db
+          .collection("Todos")
+          .doc(payload)
+          .update({ isEditing: true });
+      } catch (err) {
+        alert(err);
+      }
+    },
+    async saveEdit({ commit }, payload) {
+      try {
+        console.log(commit);
+        await db
+          .collection("Todos")
+          .doc(payload.id)
+          .update({ Task: payload.Task, isEditing: false });
+      } catch (err) {
+        alert(err);
+      }
+    },
+    async cancelEdit({ commit }, payload) {
+      try {
+        console.log(commit);
+        await db
+          .collection("Todos")
+          .doc(payload)
+          .update({ isEditing: false });
       } catch (err) {
         alert(err);
       }
@@ -86,7 +124,11 @@ export default new Vuex.Store({
         .onSnapshot((snapshot) => {
           let userTodos = [];
           snapshot.forEach((doc) => {
-            let data = { id: doc.id, Task: doc.data().Task };
+            let data = {
+              id: doc.id,
+              Task: doc.data().Task,
+              isEditing: doc.data().isEditing,
+            };
             userTodos.push(data);
           });
           context.state.isTodosLoading = false;
