@@ -5,6 +5,7 @@ Features:-
   - Create a new account
   - Login with a personal account
   - Add a new task 
+  - Edit/Modify a task
   - Delete a task
 
 # Project setup
