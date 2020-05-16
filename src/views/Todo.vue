@@ -11,12 +11,10 @@
       <div class="tasks">
         <ul>
           <li v-for="todo in getList" :key="todo.id">
-            <div v-if="!(todo.isEditing)" class="todo-container">
-              <div>
-                {{ todo.Task }}
-              </div>
+            <div v-if="!(todo.id == currentEdit)" class="todo-container">
+              <div>{{ todo.Task }}</div>
               <div class="buttons">
-                <button @click="editTodo(todo.id)">
+                <button @click="editTodo(todo)">
                   <img src="../assets/edit.svg" alt="edit" />
                 </button>
                 <button @click="deleteTodo(todo.id)">
@@ -30,7 +28,7 @@
                 <button @click="saveEdit(todo)">
                   <img src="../assets/save.svg" alt="todo-logo" />
                 </button>
-                <button @click="cancelEdit(todo.id)">
+                <button @click="cancelEdit(todo)">
                   <img src="../assets/cancel.svg" alt="edit" />
                 </button>
               </div>
@@ -50,7 +48,9 @@ export default {
   data() {
     return {
       tempTodo: "",
-      unsubscribe: null
+      unsubscribe: null,
+      currentEdit: null,
+      currentEditValue: ""
     };
   },
   methods: {
@@ -81,18 +81,12 @@ export default {
           alert(err);
         });
     },
-    editTodo(id) {
-      this.$store
-        .dispatch("editTodo", id)
-        .then(resp => {
-          console.log(resp);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    editTodo(obj) {
+      this.currentEdit = obj.id;
+      this.currentEditValue = obj.Task;
     },
-    saveEdit(obj){
-    this.$store
+    saveEdit(obj) {
+      this.$store
         .dispatch("saveEdit", obj)
         .then(resp => {
           console.log(resp);
@@ -100,16 +94,11 @@ export default {
         .catch(err => {
           console.log(err);
         });
+      this.currentEdit = null;
     },
-    cancelEdit(id) {
-      this.$store
-        .dispatch("cancelEdit", id)
-        .then(resp => {
-          console.log(resp);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    cancelEdit(obj) {
+      this.currentEdit = null;
+      obj.Task = this.currentEditValue;
     }
   },
   computed: {
@@ -134,7 +123,7 @@ export default {
 <style scoped lang="scss">
 .todo {
   border-radius: 1em;
-  background-color: none;  
+  background-color: none;
   .todo-list {
     form {
       width: 100%;
@@ -146,8 +135,9 @@ export default {
         font-size: 1.3em;
         border: 2px solid grey;
         border-radius: 1em;
-        box-shadow: 0 0 20px black;        
+        box-shadow: 0 0 20px black;
         outline: none;
+        color: grey;
       }
     }
     .loading-icon {
@@ -174,7 +164,7 @@ export default {
         font-size: 1.3em;
         border-bottom: 1px solid grey;
         word-wrap: break-word;
-        .todo-container{
+        .todo-container {
           display: grid;
           align-items: center;
           grid-template-columns: 90% 10%;
@@ -183,12 +173,12 @@ export default {
             background: none;
             text-align: left;
             font-size: 1.2rem;
-            color: grey;      
-            outline: none;                  
+            color: grey;
+            outline: none;
           }
           .buttons {
-            text-align: center;  
-            button {              
+            text-align: center;
+            button {
               cursor: pointer;
               background: none;
               border: none;
