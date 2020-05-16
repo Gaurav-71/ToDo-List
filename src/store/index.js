@@ -82,35 +82,13 @@ export default new Vuex.Store({
         alert(err);
       }
     },
-    async editTodo({ commit }, payload) {
-      try {
-        console.log(commit);
-        await db
-          .collection("Todos")
-          .doc(payload)
-          .update({ isEditing: true });
-      } catch (err) {
-        alert(err);
-      }
-    },
     async saveEdit({ commit }, payload) {
       try {
         console.log(commit);
         await db
           .collection("Todos")
           .doc(payload.id)
-          .update({ Task: payload.Task, isEditing: false });
-      } catch (err) {
-        alert(err);
-      }
-    },
-    async cancelEdit({ commit }, payload) {
-      try {
-        console.log(commit);
-        await db
-          .collection("Todos")
-          .doc(payload)
-          .update({ isEditing: false });
+          .update({ Task: payload.Task });
       } catch (err) {
         alert(err);
       }
@@ -127,7 +105,6 @@ export default new Vuex.Store({
             let data = {
               id: doc.id,
               Task: doc.data().Task,
-              isEditing: doc.data().isEditing,
             };
             userTodos.push(data);
           });
